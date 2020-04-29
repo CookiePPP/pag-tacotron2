@@ -58,12 +58,14 @@ def create_hparams(hparams_string=None, verbose=False):
         prenet_dim=256,
         max_decoder_steps=1000,
         gate_threshold=0.5,
+        gate_positive_weight=10.0,
         p_attention_dropout=0.1,
         p_decoder_dropout=0.1,
 
         # Attention parameters
         attention_rnn_dim=1024,
         attention_dim=128,
+        alignment_loss_weight=0.5, # to be tested
 
         # Location Layer parameters
         attention_location_n_filters=32,
