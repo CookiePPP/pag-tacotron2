@@ -105,12 +105,16 @@ class TextMelCollate():
         mel_padded.zero_()
         gate_padded = torch.FloatTensor(len(batch), max_target_len)
         gate_padded.zero_()
+        align_padded = torch.FloatTensor(len(batch), max_input_len, max_target_len)
+        align_padded.zero_()
         output_lengths = torch.LongTensor(len(batch))
         for i in range(len(ids_sorted_decreasing)):
             mel = batch[ids_sorted_decreasing[i]][1]
             mel_padded[i, :, :mel.size(1)] = mel
+            alignment = batch[ids_sorted_decreasing[i]][2]
+            align_padded[i, :alignment.size(0), :mel.size(1)] = alignment
             gate_padded[i, mel.size(1)-1:] = 1
             output_lengths[i] = mel.size(1)
 
         return text_padded, input_lengths, mel_padded, gate_padded, \
-            output_lengths
+            output_lengths, align_padded
