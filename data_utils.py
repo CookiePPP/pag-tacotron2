@@ -35,7 +35,7 @@ class TextMelLoader(torch.utils.data.Dataset):
         mel = self.get_mel(audiopath)
         alignment = None
         if self.load_alignments:
-            alignment = self.get_alignment(f"{audiopath}.align")
+            alignment = self.get_alignment(f"{audiopath}.align.npy")
         return (text, mel, alignment)
 
     def get_mel(self, filename):
