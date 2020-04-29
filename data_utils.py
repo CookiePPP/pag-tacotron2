@@ -112,7 +112,7 @@ class TextMelCollate():
         if self.load_alignments:
             align_padded = torch.FloatTensor(len(batch), max_input_len, max_target_len)
             align_padded.zero_()
-            max_align_len = max([x[1].size(1) for x in batch])
+            max_align_len = max([x[2].size(1) for x in batch])
             assert max_align_len == max_target_len
         else:
             align_padded = None
