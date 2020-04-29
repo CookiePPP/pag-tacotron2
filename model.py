@@ -494,7 +494,7 @@ class Tacotron2(nn.Module):
             outputs[0].data.masked_fill_(mask, 0.0)
             outputs[1].data.masked_fill_(mask, 0.0)
             outputs[2].data.masked_fill_(mask[:, 0, :], 1e3)  # gate energies
-            outputs[3].data.masked_fill_(~get_mask_3d(text_lengths, output_lengths), 0.0)
+            outputs[3].data.masked_fill_(~get_mask_3d(output_lengths, text_lengths), 0.0)
 
         return outputs
 
