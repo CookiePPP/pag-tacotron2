@@ -10,6 +10,15 @@ def get_mask_from_lengths(lengths):
     return mask
 
 
+def get_mask_3d(widths, heights):
+    max_w = torch.max(widths).item()
+    max_h = torch.max(heights).item()
+    mask = torch.zeros(widths.size(0), max_w, max_h)
+    for i in range(widths.size(0)):
+        mask[i,:widths[i],:heights[i]] = 1
+    return mask.bool()
+
+
 def load_wav_to_torch(full_path):
     sampling_rate, data = read(full_path)
     return torch.FloatTensor(data.astype(np.float32)), sampling_rate
