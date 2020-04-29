@@ -55,7 +55,7 @@ class TextMelLoader(torch.utils.data.Dataset):
         return melspec
 
     def get_alignment(self, filename):
-            alignment = torch.from_numpy(np.load(filename))
+        alignment = torch.from_numpy(np.load(filename))
         return alignment
     
     def get_text(self, text):
