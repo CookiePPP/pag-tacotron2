@@ -1,4 +1,8 @@
-# Tacotron 2 (without wavenet)
+# Tacotron 2 Pre-Alignment Guided Attention (without wavenet)
+
+This base implementation comes from https://github.com/NVIDIA/tacotron2 and so does the majority of the work.
+
+---
 
 PyTorch implementation of [Natural TTS Synthesis By Conditioning
 Wavenet On Mel Spectrogram Predictions](https://arxiv.org/pdf/1712.05884.pdf). 
@@ -24,21 +28,15 @@ Visit our [website] for audio samples using our published [Tacotron 2] and
 4. Initialize submodule: `git submodule init; git submodule update`
 5. Update .wav paths: `sed -i -- 's,DUMMY,ljs_dataset_folder/wavs,g' filelists/*.txt`
     - Alternatively, set `load_mel_from_disk=True` in `hparams.py` and update mel-spectrogram paths 
-6. Install [PyTorch 1.0]
+6. Install [PyTorch 1.1]
 7. Install [Apex]
 8. Install python requirements or build docker image 
     - Install python requirements: `pip install -r requirements.txt`
 
 ## Training
-1. `python train.py --output_directory=outdir --log_directory=logdir`
-2. (OPTIONAL) `tensorboard --logdir=outdir/logdir`
-
-## Training using a pre-trained model
-Training using a pre-trained model can lead to faster convergence  
-By default, the dataset dependent text embedding layers are [ignored]
-
-1. Download our published [Tacotron 2] model
-2. `python train.py --output_directory=outdir --log_directory=logdir -c tacotron2_statedict.pt --warm_start`
+1. Generate target alignments using a Force-Aligner
+2. `python train.py --output_directory=outdir --log_directory=logdir`
+3. (OPTIONAL) `tensorboard --logdir=outdir/logdir`
 
 ## Multi-GPU (distributed) and Automatic Mixed Precision Training
 1. `python -m multiproc train.py --output_directory=outdir --log_directory=logdir --hparams=distributed_run=True,fp16_run=True`
@@ -71,7 +69,7 @@ Tacotron PyTorch implementation.
 We are thankful to the Tacotron 2 paper authors, specially Jonathan Shen, Yuxuan
 Wang and Zongheng Yang.
 
-
+[Tacotron2]: https://github.com/NVIDIA/tacotron2
 [WaveGlow]: https://drive.google.com/file/d/1WsibBTsuRg_SF2Z6L6NFRTT-NjEy1oTx/view?usp=sharing
 [Tacotron 2]: https://drive.google.com/file/d/1c5ZTuT7J08wLUoVZ2KkUs_VdZuJ86ZqA/view?usp=sharing
 [pytorch 1.0]: https://github.com/pytorch/pytorch#installation
