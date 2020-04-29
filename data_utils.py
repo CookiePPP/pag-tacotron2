@@ -35,7 +35,9 @@ class TextMelLoader(torch.utils.data.Dataset):
         mel = self.get_mel(audiopath)
         alignment = None
         if self.load_alignments:
-            alignment = self.get_alignment(f"{audiopath}.align.npy")
+            alignment = self.get_alignment(f"{audiopath}.align{text.shape[0]}.npy")
+            assert alignment.shape[-1] == mel.shape[-1], f"Length of alignment ({alignment.shape[-1]}) and mel ({mel.shape[-1]}) do not match for {audiopath}" # assert same length
+            assert alignment.shape[0] == text.shape[0], f"length of alignment encode dim ({alignment.shape[0]}) and text ({text.shape[0]}) do not match for {audiopath}" # assert same num of chars
         return (text, mel, alignment)
 
     def get_mel(self, filename):
@@ -114,6 +116,8 @@ class TextMelCollate():
             align_padded.zero_()
             max_align_len = max([x[2].size(1) for x in batch])
             assert max_align_len == max_target_len
+            max_align_enc = max([x[2].size(0) for x in batch])
+            assert max_align_enc == max_input_len
         else:
             align_padded = None
         output_lengths = torch.LongTensor(len(batch))
