@@ -32,7 +32,8 @@ class TextMelLoader(torch.utils.data.Dataset):
         audiopath, text = audiopath_and_text[0], audiopath_and_text[1]
         text = self.get_text(text)
         mel = self.get_mel(audiopath)
-        return (text, mel)
+        alignment = self.get_alignment(f"{audiopath}.align")
+        return (text, mel, alignment)
 
     def get_mel(self, filename):
         if not self.load_mel_from_disk:
@@ -53,6 +54,10 @@ class TextMelLoader(torch.utils.data.Dataset):
 
         return melspec
 
+    def get_alignment(self, filename):
+            alignment = torch.from_numpy(np.load(filename))
+        return alignment
+    
     def get_text(self, text):
         text_norm = torch.IntTensor(text_to_sequence(text, self.text_cleaners))
         return text_norm
