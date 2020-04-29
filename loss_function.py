@@ -1,5 +1,5 @@
 from torch import nn
-
+import torch
 
 class Tacotron2Loss(nn.Module):
     def __init__(self, hparams):
