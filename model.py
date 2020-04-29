@@ -4,7 +4,7 @@ from torch.autograd import Variable
 from torch import nn
 from torch.nn import functional as F
 from layers import ConvNorm, LinearNorm
-from utils import to_gpu, get_mask_from_lengths
+from utils import to_gpu, get_mask_from_lengths, get_mask_3d
 
 
 class LocationLayer(nn.Module):
@@ -485,7 +485,7 @@ class Tacotron2(nn.Module):
             (text_padded, input_lengths, mel_padded, max_len, output_lengths),
             (mel_padded, gate_padded, align_padded))
 
-    def parse_output(self, outputs, output_lengths=None):
+    def parse_output(self, outputs, output_lengths=None, text_lengths=None):
         if self.mask_padding and output_lengths is not None:
             mask = ~get_mask_from_lengths(output_lengths)
             mask = mask.expand(self.n_mel_channels, mask.size(0), mask.size(1))
@@ -494,6 +494,7 @@ class Tacotron2(nn.Module):
             outputs[0].data.masked_fill_(mask, 0.0)
             outputs[1].data.masked_fill_(mask, 0.0)
             outputs[2].data.masked_fill_(mask[:, 0, :], 1e3)  # gate energies
+            outputs[3].data.masked_fill_(~get_mask_3d(output_lengths, text_lengths), 0.0)
 
         return outputs
 
@@ -513,7 +514,7 @@ class Tacotron2(nn.Module):
 
         return self.parse_output(
             [mel_outputs, mel_outputs_postnet, gate_outputs, alignments],
-            output_lengths)
+            output_lengths, text_lengths)
 
     def inference(self, inputs):
         embedded_inputs = self.embedding(inputs).transpose(1, 2)
