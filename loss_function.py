@@ -17,6 +17,6 @@ class Tacotron2Loss(nn.Module):
         gate_out = gate_out.view(-1, 1)
         mel_loss = nn.MSELoss()(mel_out, mel_target) + \
             nn.MSELoss()(mel_out_postnet, mel_target)
-        alignment_loss = nn.MSELoss()(alignment_out, alignment_target)
+        alignment_loss = nn.MSELoss()(alignment_out.transpose(1,2), alignment_target)
         gate_loss = nn.BCEWithLogitsLoss(pos_weight=self.pos_weight)(gate_out, gate_target)
         return mel_loss + gate_loss + (self.alignment_loss_scaler * alignment_loss), alignment_loss.item()
