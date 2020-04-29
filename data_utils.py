@@ -20,6 +20,7 @@ class TextMelLoader(torch.utils.data.Dataset):
         self.max_wav_value = hparams.max_wav_value
         self.sampling_rate = hparams.sampling_rate
         self.load_mel_from_disk = hparams.load_mel_from_disk
+        self.load_alignments = hparams.load_alignments
         self.stft = layers.TacotronSTFT(
             hparams.filter_length, hparams.hop_length, hparams.win_length,
             hparams.n_mel_channels, hparams.sampling_rate, hparams.mel_fmin,
@@ -32,7 +33,9 @@ class TextMelLoader(torch.utils.data.Dataset):
         audiopath, text = audiopath_and_text[0], audiopath_and_text[1]
         text = self.get_text(text)
         mel = self.get_mel(audiopath)
-        alignment = self.get_alignment(f"{audiopath}.align")
+        alignment = None
+        if self.load_alignments:
+            alignment = self.get_alignment(f"{audiopath}.align")
         return (text, mel, alignment)
 
     def get_mel(self, filename):
@@ -72,8 +75,9 @@ class TextMelLoader(torch.utils.data.Dataset):
 class TextMelCollate():
     """ Zero-pads model inputs and targets based on number of frames per setep
     """
-    def __init__(self, n_frames_per_step):
+    def __init__(self, n_frames_per_step, load_alignments):
         self.n_frames_per_step = n_frames_per_step
+        self.load_alignments = load_alignments
 
     def __call__(self, batch):
         """Collate's training batch from normalized text and mel-spectrogram
@@ -105,14 +109,18 @@ class TextMelCollate():
         mel_padded.zero_()
         gate_padded = torch.FloatTensor(len(batch), max_target_len)
         gate_padded.zero_()
-        align_padded = torch.FloatTensor(len(batch), max_input_len, max_target_len)
-        align_padded.zero_()
+        if self.load_alignments:
+            align_padded = torch.FloatTensor(len(batch), max_input_len, max_target_len)
+            align_padded.zero_()
+        else:
+            align_padded = None
         output_lengths = torch.LongTensor(len(batch))
         for i in range(len(ids_sorted_decreasing)):
             mel = batch[ids_sorted_decreasing[i]][1]
             mel_padded[i, :, :mel.size(1)] = mel
-            alignment = batch[ids_sorted_decreasing[i]][2]
-            align_padded[i, :alignment.size(0), :mel.size(1)] = alignment
+            if self.load_alignments:
+                alignment = batch[ids_sorted_decreasing[i]][2]
+                align_padded[i, :alignment.size(0), :mel.size(1)] = alignment
             gate_padded[i, mel.size(1)-1:] = 1
             output_lengths[i] = mel.size(1)
 
