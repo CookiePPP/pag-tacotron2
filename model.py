@@ -479,7 +479,8 @@ class Tacotron2(nn.Module):
         mel_padded = to_gpu(mel_padded).float()
         gate_padded = to_gpu(gate_padded).float()
         output_lengths = to_gpu(output_lengths).long()
-        align_padded = to_gpu(align_padded).float()
+        if align_padded is not None:
+            align_padded = to_gpu(align_padded).float()
         
         return (
             (text_padded, input_lengths, mel_padded, max_len, output_lengths),
