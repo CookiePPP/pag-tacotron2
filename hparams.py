@@ -66,6 +66,7 @@ def create_hparams(hparams_string=None, verbose=False):
         # Attention parameters
         attention_rnn_dim=1024,
         attention_dim=128,
+        alignment_encoderwise_mean = False, # average along alignment encoder dim, since it's softmaxed beforehand, should probably be False.
         alignment_loss_weight=0.5, # to be tested
 
         # Location Layer parameters
