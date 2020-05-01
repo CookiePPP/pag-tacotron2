@@ -1,4 +1,5 @@
 from math import sqrt
+import numpy as np
 import torch
 from torch.autograd import Variable
 from torch import nn
@@ -514,7 +515,8 @@ class Tacotron2(nn.Module):
         self.decoder = Decoder(hparams)
         self.postnet = Postnet(hparams)
         if self.mellotron:
-            if hparams.with_gst:
+            if hparams.with_gst:                            
+                from modules import GST
                 self.gst = GST(hparams)
             self.speaker_embedding = nn.Embedding(
                 hparams.n_speakers, hparams.speaker_embedding_dim)
