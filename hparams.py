@@ -22,9 +22,11 @@ def create_hparams(hparams_string=None, verbose=False):
         ignore_layers=['embedding.weight'],
 
         ################################
-        # Data Parameters             #
+        # Data Parameters              #
         ################################
         load_alignments=True, # disable ONLY when using Tacotron2 model to generate alignments.
+        mellotron=False, # initialize Mellotron layers
+        disable_f0=False,# Might be useful for later
         load_mel_from_disk=False,
         training_files='filelists/ljs_audio_text_train_filelist.txt',
         validation_files='filelists/ljs_audio_text_val_filelist.txt',
