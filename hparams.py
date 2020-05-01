@@ -64,6 +64,7 @@ def create_hparams(hparams_string=None, verbose=False):
         gate_positive_weight=10.0,
         p_attention_dropout=0.1,
         p_decoder_dropout=0.1,
+        p_teacher_forcing=1.0,
 
         # Attention parameters
         attention_rnn_dim=1024,
@@ -79,7 +80,36 @@ def create_hparams(hparams_string=None, verbose=False):
         postnet_embedding_dim=512,
         postnet_kernel_size=5,
         postnet_n_convolutions=5,
+        
+        ################################
+        # Mellotron Hyperparameters    #
+        ################################
+        f0_min=80,
+        f0_max=880,
+        harm_thresh=0.25,
+        
+        # Prenet
+        prenet_f0_n_layers=1,
+        prenet_f0_dim=1,
+        prenet_f0_kernel_size=1,
+        prenet_rms_dim=0,
+        prenet_rms_kernel_size=1,
+        
+        # Speaker embedding
+        n_speakers=123,
+        speaker_embedding_dim=128,
 
+        # Reference encoder
+        with_gst=True,
+        ref_enc_filters=[32, 32, 64, 64, 128, 128],
+        ref_enc_size=[3, 3],
+        ref_enc_strides=[2, 2],
+        ref_enc_pad=[1, 1],
+        ref_enc_gru_size=128,
+
+        # Style Token Layer
+        token_embedding_size=256,
+        token_num=10,
         ################################
         # Optimization Hyperparameters #
         ################################
